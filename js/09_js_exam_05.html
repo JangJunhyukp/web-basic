@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    .normal {
+      width: 100px;
+      height: 30px;
+      display: inline-block;
+      background-color: gray;
+      text-align: center;
+      line-height: 30px;
+      color: white;
+      margin: 5px;
+      border: 1px solid black;
+    }
+
+    .selected {
+      width: 100px;
+      height: 30px;
+      display: inline-block;
+      background-color: white;
+      text-align: center;
+      line-height: 30px;
+      color: black;
+      margin: 5px;
+      border: 1px solid black;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="normal" id="html" onmouseover="select(this)" onmouseleave="noSelect()">html</div>
+  <div class="normal" id="css" onmouseover="select(this)">css</div>
+  <div class="normal" id="javascript" onmouseover="select(this)">javascript</div>
+
+  <script>
+    const buttons = document.getElementsByTagName('div');
+
+    function select(element) {
+      for (let i = 0; i < buttons.length; i++) {
+        const button = buttons[i];
+        if (button === element) {
+          button.className = 'selected'
+        }
+
+        else {
+          button.className = 'normal';
+        }
+      }
+    }
+  </script>
+</body>
+
+</html>
