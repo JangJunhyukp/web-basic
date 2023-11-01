@@ -19,12 +19,15 @@
 
   <script>
     function load() {
-      const div1 = document.getElementById('div1');
-      div1.style.backgroundColor = 'red';
+      //const div1 = document.getElementById('div1');
+      //div1.style.backgroundColor = 'red';
+
+      // JQuery
+      $('#div1').css('background-color', 'red');
     }
      
     // onload 와 동일한 효과
-    
+
     $(function () {
       load();
     });
