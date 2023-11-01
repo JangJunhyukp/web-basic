@@ -1,1 +1,5 @@
+<<<<<<< HEAD
 sadasdasdasd
+=======
+sadasdfasdfefsdaf
+>>>>>>> refs/remotes/origin/master
