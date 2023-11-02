@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4="
+    crossorigin="anonymous"></script>
+  <style>
+    .big-text {
+      font-size: xx-large;
+    }
+    .center {
+      text-align: center;
+    }
+    #red {
+      background-color: red;
+      color: white;
+    }
+    #blue {
+      background-color: blue;
+      color: white;
+    }
+    #green {
+      background-color: green;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+  <input type="text" id="textField">
+  <button id="inputButton">입력</button>
+  <div id="container" class="center">
+    <div id="result" class="big-text">big text</div>
+    <button id="red">빨강</button>
+    <button id="blue">파랑</button>
+    <button id="green">초록</button>
+  </div>
+  <script>
+    $(document).ready(function() {
+      const textField = $('#textField');
+      const resultText = $('#result');
+      const container = $('#container');
+
+      container.css('visibility', 'hidden');
+
+      $('#inputButton').click(function() {
+        const text = textField.val();
+        if (text === '') {
+          alert('텍스트값을 입력해 주세요');
+        } else {
+          resultText.text(text);
+          textField.val('');
+          container.css('visibility', 'visible');
+        }
+      });
+
+      $('#red').click(function() {
+        changeColor('빨강', 'red');
+      });
+
+      $('#blue').click(function() {
+        changeColor('파랑', 'blue');
+      });
+
+      $('#green').click(function() {
+        changeColor('초록', 'green');
+      });
+
+      function changeColor(colorText, color) {
+        alert(`${colorText}색으로 변경됩니다.`);
+        resultText.css('color', color);
+      }
+    });
+  </script>
+</body>
+</html>
