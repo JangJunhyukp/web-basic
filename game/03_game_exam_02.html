@@ -8,11 +8,28 @@
     crossorigin="anonymous"></script>
 
     <style>
+      
+      @keyframes scrollBackground {
+      0% {
+        background-position: 100% 0;
+        /* 시작 위치 */
+      }
+
+      100% {
+        background-position: 0 0;
+        /* 끝 위치 */
+      }
+    }
+
       #stage {
         position: relative;
         width: 400px;
         height: 500px;
         border: 1.5px solid black;
+        background-image: url(BackGround.jpg);
+        background-size: auto 100%;
+        background-repeat: repeat-x;
+        animation: scrollBackground 10s linear infinite;
       }
   
       #player {
@@ -32,12 +49,23 @@
         right: 10px;
         transform: scaleX(-1);
       }
+
+      #gameOverScene {
+      visibility: hidden;
+      width: 100%;
+      height: 100%;
+      background-color: aqua;
+    }
     </style>
 </head>
 <body>
   <div id="stage">
     <img id="player" src="ZzangGu.png">
     <img id="enemy" src="WhiteDog.png">
+    <div id="gameOverScene">
+      Game Over
+      <br>
+      <button onclick="gameReset()">재시작</buttonㅊ>
   </div>
 
   <script>
@@ -50,6 +78,7 @@
     let speed = 5;
 
     let isGameOver = false;
+    let enemyRespawnTimeout;
 
     // 계속 실행될 함수
     function onUpdate() {
@@ -58,8 +87,26 @@
 
         if (onCollisionEnter(player, enemy)) {
           isGameOver = true;
+
+          // 게임오버 화면 표시
+          $('#gameOverScene').css('visibility', 'visible');
         }
       }
+    }
+
+    // 게임 상태 초기화
+    function gameReset() {
+      isGameOver = false;
+      isJumping = false;
+      speed = 3;
+
+      player.css({ bottom: '10px' });
+      enemy.css({ left: '350px' });
+
+      clearTimeout(enemyRespawnTimeout);
+
+      // 게임오버 화면 없애기
+      $('#gameOverScene').css('visibility', 'hidden');
     }
 
     // 충돌 체크
