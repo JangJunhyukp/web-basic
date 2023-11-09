@@ -21,6 +21,18 @@
       }
     }
 
+    body {
+      margin: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background-image: url('bgImg.jpg');
+      /* 배경 이미지 설정 */
+      background-size: cover;
+      /* 배경 이미지 원래 크기로 유지 */
+    }
+
     #stage {
       position: relative;
       width: 400px;
@@ -30,6 +42,7 @@
       background-size: 100% auto;
       background-repeat: repeat-y;
       animation: scrollBackground 7s linear infinite;
+      size: 100% 100%;
     }
 
     #player {
@@ -127,10 +140,25 @@
       width: 100px;
       height: 50px;
     }
+
+    #bg {
+      position: absolute;
+      width: 1000px;
+    }
+
+    #title {
+      position: absolute;
+      top: 180px;
+      color: rebeccapurple;
+      text-shadow: -5px -5px 0 white, 5px -5px 0 white, -5px 5px 0 white, 5px 5px 0 white;
+      font-size: 40px;
+      size: 100% 100%;
+    }
   </style>
 </head>
 
 <body>
+  <div id="title"><h1>훈발놈 피하기</h1></div>
   <div id="stage">
     <img id="player" src="짱구움짤.gif">
     <img id="enemy1" src="훈발놈.png">
@@ -148,306 +176,308 @@
       <button id="clearButton" onclick="gameclear()">다시할래..?</button>
     </div>
     TIME : <span id="timeText">00:00</span>
-    <script>
-      const player = $('#player');
-      const enemy1 = $('#enemy1');
-      const enemy2 = $('#enemy2');
-      const enemy3 = $('#enemy3');
-      const enemy4 = $('#enemy4');
-      const timeText = $('#timeText');
+  </div>
 
-      let time;
+  <script>
+    const player = $('#player');
+    const enemy1 = $('#enemy1');
+    const enemy2 = $('#enemy2');
+    const enemy3 = $('#enemy3');
+    const enemy4 = $('#enemy4');
+    const timeText = $('#timeText');
 
-      let speed1 = getRandomValue(3, 6);
-      let speed2 = getRandomValue(3, 6);
-      let speed3 = getRandomValue(3, 6);
-      let speed4 = getRandomValue(3, 6);
+    let time;
 
-      let isGameOver = false;
-      let isGameClear = false;
+    let speed1 = getRandomValue(3, 6);
+    let speed2 = getRandomValue(3, 6);
+    let speed3 = getRandomValue(3, 6);
+    let speed4 = getRandomValue(3, 6);
 
-      let enemyRespawnTimeout;
+    let isGameOver = false;
+    let isGameClear = false;
 
-      let timeInterval;
+    let enemyRespawnTimeout;
 
-      function gameclear() {
-        location.reload();
-      }
+    let timeInterval;
 
-      // 계속 실행될 함수
-      function onUpdate() {
-        if (!isGameOver) {
-          moveEnemy1(speed1);
-          moveEnemy2(speed2);
-          moveEnemy3(speed3);
-          moveEnemy4(speed4);
+    function gameclear() {
+      location.reload();
+    }
 
-          if (onCollisionEnter(player, enemy1)) {
-            isGameOver = true;
+    // 계속 실행될 함수
+    function onUpdate() {
+      if (!isGameOver) {
+        moveEnemy1(speed1);
+        moveEnemy2(speed2);
+        moveEnemy3(speed3);
+        moveEnemy4(speed4);
 
-            // 게임오버 화면 표시
-            $('#gameOverScene').css('visibility', 'visible');
-            clearInterval(timeInterval);
-            player.hide();
-            enemy1.hide();
-            enemy2.hide();
-            enemy3.hide();
-            enemy4.hide();
-          }
+        if (onCollisionEnter(player, enemy1)) {
+          isGameOver = true;
 
-          else if (onCollisionEnter(player, enemy2)) {
-            isGameOver = true;
-
-            // 게임오버 화면 표시
-            $('#gameOverScene').css('visibility', 'visible');
-            clearInterval(timeInterval);
-            player.hide();
-            enemy1.hide();
-            enemy2.hide();
-            enemy3.hide();
-            enemy4.hide();
-          }
-
-          else if (onCollisionEnter(player, enemy3)) {
-            isGameOver = true;
-
-            // 게임오버 화면 표시
-            $('#gameOverScene').css('visibility', 'visible');
-            clearInterval(timeInterval);
-            player.hide();
-            enemy1.hide();
-            enemy2.hide();
-            enemy3.hide();
-            enemy4.hide();
-          }
-
-          else if (onCollisionEnter(player, enemy4)) {
-            isGameOver = true;
-
-            // 게임오버 화면 표시
-            $('#gameOverScene').css('visibility', 'visible');
-            clearInterval(timeInterval);
-            player.hide();
-            enemy1.hide();
-            enemy2.hide();
-            enemy3.hide();
-            enemy4.hide();
-          }
-
-          if (time === 0) {
-            clearInterval(timeInterval);
-            isGameClear = true;
-
-            $('#gameClearScene').css('visibility', 'visible');
-          }
-        }
-      }
-
-      // 게임 상태 초기화
-      function gameReset() {
-        player.show();
-        enemy1.show();
-        enemy2.show();
-        enemy3.show();
-        enemy4.show();
-        isGameOver = false;
-        speed1 = getRandomValue(3, 6);
-        speed2 = getRandomValue(3, 6);
-        speed3 = getRandomValue(3, 6);
-        speed4 = getRandomValue(3, 6);
-
-        clearInterval(timeInterval); // 이 부분을 추가해서 기존 interval을 중지합니다.
-        time = 15;
-        updateTimeText();
-
-        timeInterval = setInterval(function () {
-          time--;
-          updateTimeText(); // 시간을 업데이트하고 다시 setInterval을 설정합니다.
-        }, 1000);
-
-        player.css({ bottom: '10px' });
-        enemy1.css({ top: '5px' });
-        enemy2.css({ top: '5px' });
-        enemy3.css({ top: '5px' });
-        enemy4.css({ top: '5px' });
-
-        clearTimeout(enemyRespawnTimeout);
-
-        // 게임오버 화면 없애기
-        $('#gameOverScene').css('visibility', 'hidden');
-      }
-
-
-      function updateTimeText() {
-        const minutes = Math.floor((time % 3600) / 60);
-        const seconds = time % 60;
-        const timeString = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
-        timeText.text(timeString);
-      }
-
-      // 충돌 체크
-      function onCollisionEnter(rect1, rect2) {
-        // 첫 번째 사각형의 위치와 크기 정보 가져오기
-        const rect1Left = rect1.offset().left + 20;
-        const rect1Top = rect1.offset().top;
-        const rect1Right = rect1Left + rect1.width() - 20;
-        const rect1Bottom = rect1Top + rect1.height();
-
-        // 두 번째 사각형의 위치와 크기 정보 가져오기
-        const rect2Left = rect2.offset().left + 20;
-        const rect2Top = rect2.offset().top;
-        const rect2Right = rect2Left + rect2.width() - 20;
-        const rect2Bottom = rect2Top + rect2.height();
-
-        // 충돌 검사
-        if (
-          rect1Right >= rect2Left &&
-          rect1Left <= rect2Right &&
-          rect1Bottom >= rect2Top &&
-          rect1Top <= rect2Bottom
-        ) {
-          return true; // 충돌
+          // 게임오버 화면 표시
+          $('#gameOverScene').css('visibility', 'visible');
+          clearInterval(timeInterval);
+          player.hide();
+          enemy1.hide();
+          enemy2.hide();
+          enemy3.hide();
+          enemy4.hide();
         }
 
-        return false; // 충돌하지 않음
-      }
+        else if (onCollisionEnter(player, enemy2)) {
+          isGameOver = true;
 
-      function moveEnemy1(speed1) {
-        enemy1.css({ top: `+=${speed1}px` });
-
-        // 나갔으면 원래 위치로 이동
-        const enemy1Top = parseInt(enemy1.css('top'), 10);
-        if (enemy1Top > 460) {
-          enemy1Reset();
-        }
-      }
-
-      function moveEnemy2(speed2) {
-        enemy2.css({ top: `+=${speed2}px` });
-
-        const enemy2Top = parseInt(enemy2.css('top'), 10);
-        if (enemy2Top > 460) {
-          enemy2Reset();
-        }
-      }
-
-      function moveEnemy3(speed3) {
-        enemy3.css({ top: `+=${speed3}px` });
-
-        const enemy3Top = parseInt(enemy3.css('top'), 10);
-        if (enemy3Top > 460) {
-          enemy3Reset();
-        }
-      }
-
-      function moveEnemy4(speed4) {
-        enemy4.css({ top: `+=${speed4}px` });
-
-        const enemy4Top = parseInt(enemy4.css('top'), 10);
-        if (enemy4Top > 460) {
-          enemy4Reset();
-        }
-      }
-
-      function enemy1Reset() {
-        speed1 = getRandomValue(3, 6);
-
-        const time = 1;
-
-        const randomPosition1 = getRandomValue(0, 80); // 좌우 위치를 랜덤으로 설정
-        enemy1.css({ left: `${randomPosition1}px` });
-
-        enemy1.css({ top: '5px' });
-      }
-
-      function enemy2Reset() {
-        speed2 = getRandomValue(3, 6);
-
-        const time = 1;
-
-        const randomPosition2 = getRandomValue(90, 170); // 좌우 위치를 랜덤으로 설정
-        enemy2.css({ left: `${randomPosition2}px` });
-
-        enemy2.css({ top: '5px' });
-      }
-
-      function enemy3Reset() {
-        speed3 = getRandomValue(3, 6);
-
-        const time = 1;
-
-        const randomPosition3 = getRandomValue(180, 260); // 좌우 위치를 랜덤으로 설정
-        enemy3.css({ left: `${randomPosition3}px` });
-        enemy3.css({ top: '5px' });
-      }
-
-      function enemy4Reset() {
-        speed4 = getRandomValue(3, 6);
-
-        const time = 1;
-
-        const randomPosition4 = getRandomValue(270, 350); // 좌우 위치를 랜덤으로 설정
-        enemy4.css({ left: `${randomPosition4}px` });
-        enemy4.css({ top: '5px' });
-      }
-
-      function getRandomValue(min, max) {
-        return Math.floor(Math.random() * (max - min + 1)) + min;
-      }
-
-      function moveRight() {
-        const playerRight = parseInt(player.css('right'), 10);
-        if (playerRight <= 0) {
-          return;
+          // 게임오버 화면 표시
+          $('#gameOverScene').css('visibility', 'visible');
+          clearInterval(timeInterval);
+          player.hide();
+          enemy1.hide();
+          enemy2.hide();
+          enemy3.hide();
+          enemy4.hide();
         }
 
-        else if (!isGameOver) {
-          const playerLeft = parseInt(player.css('left'), 10);
-          player.css({ left: (playerLeft + 25) + 'px' });
-          player.css({ transform: 'scaleX(1)' });
+        else if (onCollisionEnter(player, enemy3)) {
+          isGameOver = true;
+
+          // 게임오버 화면 표시
+          $('#gameOverScene').css('visibility', 'visible');
+          clearInterval(timeInterval);
+          player.hide();
+          enemy1.hide();
+          enemy2.hide();
+          enemy3.hide();
+          enemy4.hide();
+        }
+
+        else if (onCollisionEnter(player, enemy4)) {
+          isGameOver = true;
+
+          // 게임오버 화면 표시
+          $('#gameOverScene').css('visibility', 'visible');
+          clearInterval(timeInterval);
+          player.hide();
+          enemy1.hide();
+          enemy2.hide();
+          enemy3.hide();
+          enemy4.hide();
+        }
+
+        if (time === 0) {
+          clearInterval(timeInterval);
+          isGameClear = true;
+
+          $('#gameClearScene').css('visibility', 'visible');
         }
       }
+    }
 
-      function moveLeft() {
+    // 게임 상태 초기화
+    function gameReset() {
+      player.show();
+      enemy1.show();
+      enemy2.show();
+      enemy3.show();
+      enemy4.show();
+      isGameOver = false;
+      speed1 = getRandomValue(3, 6);
+      speed2 = getRandomValue(3, 6);
+      speed3 = getRandomValue(3, 6);
+      speed4 = getRandomValue(3, 6);
+
+      clearInterval(timeInterval); // 이 부분을 추가해서 기존 interval을 중지합니다.
+      time = 15;
+      updateTimeText();
+
+      timeInterval = setInterval(function () {
+        time--;
+        updateTimeText(); // 시간을 업데이트하고 다시 setInterval을 설정합니다.
+      }, 1000);
+
+      player.css({ bottom: '10px' });
+      enemy1.css({ top: '5px' });
+      enemy2.css({ top: '5px' });
+      enemy3.css({ top: '5px' });
+      enemy4.css({ top: '5px' });
+
+      clearTimeout(enemyRespawnTimeout);
+
+      // 게임오버 화면 없애기
+      $('#gameOverScene').css('visibility', 'hidden');
+    }
+
+
+    function updateTimeText() {
+      const minutes = Math.floor((time % 3600) / 60);
+      const seconds = time % 60;
+      const timeString = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+      timeText.text(timeString);
+    }
+
+    // 충돌 체크
+    function onCollisionEnter(rect1, rect2) {
+      // 첫 번째 사각형의 위치와 크기 정보 가져오기
+      const rect1Left = rect1.offset().left + 20;
+      const rect1Top = rect1.offset().top;
+      const rect1Right = rect1Left + rect1.width() - 20;
+      const rect1Bottom = rect1Top + rect1.height();
+
+      // 두 번째 사각형의 위치와 크기 정보 가져오기
+      const rect2Left = rect2.offset().left + 20;
+      const rect2Top = rect2.offset().top;
+      const rect2Right = rect2Left + rect2.width() - 20;
+      const rect2Bottom = rect2Top + rect2.height();
+
+      // 충돌 검사
+      if (
+        rect1Right >= rect2Left &&
+        rect1Left <= rect2Right &&
+        rect1Bottom >= rect2Top &&
+        rect1Top <= rect2Bottom
+      ) {
+        return true; // 충돌
+      }
+
+      return false; // 충돌하지 않음
+    }
+
+    function moveEnemy1(speed1) {
+      enemy1.css({ top: `+=${speed1}px` });
+
+      // 나갔으면 원래 위치로 이동
+      const enemy1Top = parseInt(enemy1.css('top'), 10);
+      if (enemy1Top > 460) {
+        enemy1Reset();
+      }
+    }
+
+    function moveEnemy2(speed2) {
+      enemy2.css({ top: `+=${speed2}px` });
+
+      const enemy2Top = parseInt(enemy2.css('top'), 10);
+      if (enemy2Top > 460) {
+        enemy2Reset();
+      }
+    }
+
+    function moveEnemy3(speed3) {
+      enemy3.css({ top: `+=${speed3}px` });
+
+      const enemy3Top = parseInt(enemy3.css('top'), 10);
+      if (enemy3Top > 460) {
+        enemy3Reset();
+      }
+    }
+
+    function moveEnemy4(speed4) {
+      enemy4.css({ top: `+=${speed4}px` });
+
+      const enemy4Top = parseInt(enemy4.css('top'), 10);
+      if (enemy4Top > 460) {
+        enemy4Reset();
+      }
+    }
+
+    function enemy1Reset() {
+      speed1 = getRandomValue(3, 6);
+
+      const time = 1;
+
+      const randomPosition1 = getRandomValue(0, 80); // 좌우 위치를 랜덤으로 설정
+      enemy1.css({ left: `${randomPosition1}px` });
+
+      enemy1.css({ top: '5px' });
+    }
+
+    function enemy2Reset() {
+      speed2 = getRandomValue(3, 6);
+
+      const time = 1;
+
+      const randomPosition2 = getRandomValue(90, 170); // 좌우 위치를 랜덤으로 설정
+      enemy2.css({ left: `${randomPosition2}px` });
+
+      enemy2.css({ top: '5px' });
+    }
+
+    function enemy3Reset() {
+      speed3 = getRandomValue(3, 6);
+
+      const time = 1;
+
+      const randomPosition3 = getRandomValue(180, 260); // 좌우 위치를 랜덤으로 설정
+      enemy3.css({ left: `${randomPosition3}px` });
+      enemy3.css({ top: '5px' });
+    }
+
+    function enemy4Reset() {
+      speed4 = getRandomValue(3, 6);
+
+      const time = 1;
+
+      const randomPosition4 = getRandomValue(270, 350); // 좌우 위치를 랜덤으로 설정
+      enemy4.css({ left: `${randomPosition4}px` });
+      enemy4.css({ top: '5px' });
+    }
+
+    function getRandomValue(min, max) {
+      return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+
+    function moveRight() {
+      const playerRight = parseInt(player.css('right'), 10);
+      if (playerRight <= 0) {
+        return;
+      }
+
+      else if (!isGameOver) {
         const playerLeft = parseInt(player.css('left'), 10);
-        if (playerLeft <= 0) {
-          return;
-        }
+        player.css({ left: (playerLeft + 25) + 'px' });
+        player.css({ transform: 'scaleX(1)' });
+      }
+    }
 
-        else if (!isGameOver) {
-          const playerLeft = parseInt(player.css('left'), 10);
-          player.css({ left: (playerLeft - 25) + 'px' });
-          player.css({ transform: 'scaleX(-1)' });
-        }
+    function moveLeft() {
+      const playerLeft = parseInt(player.css('left'), 10);
+      if (playerLeft <= 0) {
+        return;
       }
 
-      $(document).keydown(function (event) {
-        console.log(event.key);
-
-        switch (event.key) {
-          case 'd':
-          case 'ArrowRight':
-            moveRight();
-            break;
-          case 'a':
-          case 'ArrowLeft':
-            moveLeft();
-            break;
-          case 'w':
-          case 'ArrowUp':
-          default:
-        }
-      });
-
-      // 1초에 60프레임 이동
-      setInterval(onUpdate, 1000 / 60)
-
-      function startGame() {
-        gameReset(); // Game reset
+      else if (!isGameOver) {
+        const playerLeft = parseInt(player.css('left'), 10);
+        player.css({ left: (playerLeft - 25) + 'px' });
+        player.css({ transform: 'scaleX(-1)' });
       }
+    }
 
-      startGame();
-    </script>
+    $(document).keydown(function (event) {
+      console.log(event.key);
+
+      switch (event.key) {
+        case 'd':
+        case 'ArrowRight':
+          moveRight();
+          break;
+        case 'a':
+        case 'ArrowLeft':
+          moveLeft();
+          break;
+        case 'w':
+        case 'ArrowUp':
+        default:
+      }
+    });
+
+    // 1초에 60프레임 이동
+    setInterval(onUpdate, 1000 / 60)
+
+    function startGame() {
+      gameReset(); // Game reset
+    }
+
+    startGame();
+  </script>
 </body>
 
 </html>
